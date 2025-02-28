@@ -1,19 +1,25 @@
 //Variables Globales
-let sbProductButton = document.getElementById('productButton');
-let sbCategoriesButton = document.getElementById('categoriesButton');
+const sbProductButton = document.getElementById('productButton');
+const sbCategoriesButton = document.getElementById('categoriesButton');
 
-let newProductButton = document.getElementById('newProductButton');//Boton principal
-let newCategoryButton = document.getElementById('newCategoryButton');//Boton principal
+const newProductButton = document.getElementById('newProductButton');//Boton principal
+const newCategoryButton = document.getElementById('newCategoryButton');//Boton principal
 
-let acceptProductButton = document.getElementById('acceptProductButton');//Boton Secundario
-let acceptCategoryButton = document.getElementById('acceptCategoryButton');//Boton Secundario
+const editProductButton = document.getElementById('editProductButton');
+const deleteProductButton = document.getElementById('deleteProductButton');
 
-let cancelNewProductButton = document.getElementById('cancelAddProduct');//Boton Secundario
-let cancelNewCategoryButton = document.getElementById('cancelAddCategory');//Boton Secundario
+const acceptProductButton = document.getElementById('acceptProductButton');//Boton Secundario
+const acceptCategoryButton = document.getElementById('acceptCategoryButton');//Boton Secundario
+const acceptEditProductButton = document.getElementById('acceptEditProduct');
 
-let productMenu = document.querySelector('.addProducts');
-let prueba = document.querySelector('.prueba');
-let categoryMenu = document.querySelector('.addCategories');
+const cancelNewProductButton = document.getElementById('cancelAddProduct');//Boton Secundario
+const cancelNewCategoryButton = document.getElementById('cancelAddCategory');//Boton Secundario
+const cancelEditProductButton = document.getElementById('cancelEditProductButton');
+
+const productMenu = document.querySelector('.addProducts');
+const editMenu = document.getElementById('editMenu');
+const prueba = document.querySelector('.prueba');
+const categoryMenu = document.querySelector('.addCategories');
 
 let inputValues = {};//Tiene almacenado el objeto listo para SourceOfTruth
 
@@ -73,76 +79,6 @@ function renderProducts() {
 }
 renderProducts();
 
-//Funcion para crear ProductPage dinamicamente
-function createProductPage() {
-    let fatherContainer = document.getElementById('productPageContainer');
-    fatherContainer.innerHTML = '';
-    fatherContainer.forEach(function(page) {
-        let productPage = document.createElement('div');
-        productPage.classList.add('productPageCategory');
-        productPage.id = 'page-sku-';
-        productPage.innerHTML = 
-    `                    
-        <div class="productPageHeader">
-        <h2 id="sku-">Laptop Gamer</h2>
-        <p class="lastUpdated">
-        Last update <span class="date">February 25, 2025 at 7:41pm</span>
-        </p>
-        </div>
-        <div class="productPageMain">
-        <div class="productInfo">
-        <div class="imageProductPage">
-        </div>
-        <div class="textContainer">
-        <p class="productName">
-        </p>
-        <p class="productBrand">
-        </p>
-        <p class="productSpecs">
-        </p>
-        </div>
-        </div>
-        <div class="productDetails">
-        <div class="buttonsContainer">
-        <button class="deleteProductButton">
-        Delete
-        </button>
-        <button class="editProductButton">
-        Edit Product
-        </button>
-        </div>
-        <div class="availability">
-        <strong>
-        Availability
-        </strong>
-        <p>
-        Stock: <span class="stockInfo">10</span>
-        </p>
-        <p>
-        Product SKU: <span class="productSku">1</span>
-        </p>
-        </div>
-        </div>
-        </div>
-        <div class="relatedProductsContainer">
-        <div class="textContainer">
-        Related Products
-        </div>
-        <div class="relatedProducts">
-        <div class="related"></div>
-        <div class="related"></div>
-        <div class="related"></div>
-        <div class="related"></div>
-        <div class="related"></div>
-        <div class="related"></div>
-        <div class="related"></div>
-        </div>
-        </div>
-     `;
-     fatherContainer.appendChild(productPage);
-    });
-}
-
 //Funcion para hacer push a nuevo producto con Accept Button
 function pushNewProduct() {
     productMenu.addEventListener("input", function(event) {
@@ -184,7 +120,12 @@ function pushNewProduct() {
 }
 pushNewProduct();
 
-newCategoryButton.addEventListener('click', function() {
+document.addEventListener('DOMContentLoaded', function() {
+    createProductage();
+    productPage();
+});
+
+newCategoryButton.addEventListener('click', function() {//cambiar
     showAddCategory();
     closeMenu();
 });
@@ -197,16 +138,16 @@ sbCategoriesButton.addEventListener('click', function() {
     showCategories();
 });
 
-newProductButton.addEventListener('click', function() {
+newProductButton.addEventListener('click', function() {//cambiar
     showProductMenu();
     closeMenu();
 });
 
-cancelNewProductButton.addEventListener('click', function() {
+cancelNewProductButton.addEventListener('click', function() {//cambiar
     showProductMenu();
 });
 
-cancelNewCategoryButton.addEventListener('click', function() {
+cancelNewCategoryButton.addEventListener('click', function() {//cambiar
     showAddCategory();
 });
 
@@ -363,9 +304,7 @@ function closeMenuHandler(event) {
             // Remueve el event listener para que no siga ejecutándose después
             document.removeEventListener('click', closeMenuHandler);//No es mia
             }
-            console.log('Click fuera de los 3');
         }else {
-            console.log('Click en uno de los 3')
         }
 }
 
@@ -374,24 +313,107 @@ function productPage() {
     let clickProduct = document.querySelectorAll('.productContainer');
     let productCategory = document.querySelector('.productCategory');
 
-    clickProduct.forEach(function(event) {//Event tiene el ID correcto
-        let elementClicked = event.closest("[id^='sku-']");
-        event.addEventListener('click', function() {
-            if (elementClicked) {
-                let idClickeado = elementClicked.id; // Obtiene el ID, por ejemplo, "sku-1"
-                let idPagina = "page-" + idClickeado; // Construye el nuevo ID, ejemplo: "page-sku-1"
-                let pagina = document.getElementById(idPagina);
-                let pageContainer = document.getElementById('productPageContainer');
-                if (pagina) {
-                    pagina.style.display = 'block';
-                    pageContainer.style.display = 'block';
-                    productCategory.style.display = 'none';
-                }
+    document.addEventListener('click', function(event) {
+        let elementClicked = event.target.closest("[id^='sku-']"); //sku-X
+        if (elementClicked) {
+            let idClickeado = elementClicked.id; // Obtiene el ID, por ejemplo, "sku-1"
+            let idPagina = "page-" + idClickeado; // Construye el nuevo ID, ejemplo: "page-sku-1"
+            let pagina = document.getElementById(idPagina); //page-sku-X
+            let pageContainer = document.getElementById('productPageContainer');
+            if (pagina) {
+                pagina.style.display = 'block';
+                pageContainer.style.display = 'block';
+                productCategory.style.display = 'none';
+            }else {
+                console.log('Page Doesnt Exist');
             }
-        })
+        }
     })
 }
-productPage();
+
+//Funcion para crear ProductPage dinamicamente
+function createProductage() {
+    document.addEventListener('click', function(event) {
+      // Obtener el elemento que tenga un id que empiece por "sku-"
+      let idElement = event.target.closest("[id^='sku-']");
+      if (!idElement) return; // Si no se hace clic en un elemento relevante, salir
+  
+      // Extraer datos del elemento clickeado
+      let nameElement = idElement.querySelector('.name');
+      let stockElement = idElement.querySelector('.stock');
+      let imageElement = idElement.querySelector('.imageContainer img');
+      let base64Src = imageElement.src; // data:image/png;base64,iVBOR_0B...
+      let idJustNumber = parseInt(idElement.id.replace('sku-', ''), 10);
+  
+      if (!nameElement || !stockElement) return;
+  
+      let name = nameElement.textContent;
+      let stock = stockElement.textContent;
+      let skuNumber = parseInt(idElement.id.replace('sku-', ''), 10);
+  
+      // Limpiar el contenedor de la página de producto
+      let fatherContainer = document.getElementById('productPageContainer');
+      fatherContainer.innerHTML = '';
+  
+      // Crear el nuevo contenedor de la página de producto
+      let productPage = document.createElement('div');
+      productPage.classList.add('productPageCategory');
+      productPage.id = `page-sku-${skuNumber}`;
+  
+      productPage.innerHTML = `
+        <div class="productPageHeader">
+          <h2>${name}</h2>
+          <p class="lastUpdated">
+            Last update <span class="date">February 25, 2025 at 7:41pm</span>
+          </p>
+        </div>
+        <div class="productPageMain">
+          <div class="productInfo">
+            <div class="imageProductPage">
+              <img src="${base64Src}" alt="Imagen de ${name}">
+            </div>
+            <div class="textContainer">
+              <p class="productName">${name}</p>
+              <p id="productBrand-${idJustNumber}" class="productBrand">EDIT</p>
+              <p id="productSpecs -${idJustNumber}" class="productSpecs">EDIT</p>
+            </div>
+          </div>
+          <div class="productDetails">
+            <div class="buttonsContainer">
+              <button class="deleteProductButton">Delete</button>
+              <button class="editProductButton">Edit Product</button>
+            <div class="editMenu">
+                <label for="editTitle">Tilte</label>
+                <input type="text" id="editTitle">
+                <label for="editSubtitle">Brand</label>
+                <input type="text" id="editSubtitle">
+                <label for="editSpecs">Details</label>
+                <input type="text" id="editSpecs">
+            </div>
+            </div>
+            <div class="availability">
+              <strong>Availability</strong>
+              <p>Stock: <span class="stockInfo">${stock}</span></p>
+              <p>Product SKU: <span class="productSku">${skuNumber}</span></p>
+            </div>
+          </div>
+        </div>
+        <div class="relatedProductsContainer">
+          <div class="textContainer">Related Products</div>
+          <div class="relatedProducts">
+            <div class="related"></div>
+            <div class="related"></div>
+            <div class="related"></div>
+            <div class="related"></div>
+            <div class="related"></div>
+            <div class="related"></div>
+            <div class="related"></div>
+          </div>
+        </div>
+      `;
+      fatherContainer.appendChild(productPage);
+    });
+  }
 
 //Funcion para mostrar Category Page
 function categoryPage() {
@@ -428,6 +450,7 @@ function errorMessage() {
     let quantityContainer = document.querySelector('.quantityMessageContainer');
     let priceContainer = document.querySelector('.priceMessageContainer');
     let codeContainer = document.querySelector('.codeMessageContainer');
+    let uploadImage = document.getElementById('uploadImage');
 
     let originalHeight = parseFloat(window.getComputedStyle(productMenu).height) - (currentErrorCount * errorHeightIncrement);
     let newErrorCount = 0;
@@ -460,4 +483,4 @@ function resetInputErrors() {
 }
 
 
-
+  

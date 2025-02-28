@@ -305,12 +305,26 @@
                         </div>
                         <div class="productDetails">
                             <div class="buttonsContainer">
-                                <button class="deleteProductButton">
+                                <button id="deleteProductButton" class="deleteProductButton">
                                     Delete
                                 </button>
-                                <button class="editProductButton">
+                                <button id="editProductButton" class="editProductButton">
                                     Edit Product
                                 </button>
+                                <button id="cancelEditProductButton">
+                                    Cancel
+                                </button>
+                                <button id="acceptEditProduct">
+                                    Accept
+                                </button>
+                                <div id="editMenu" class="editMenu">
+                                    <label for="editTitle">Tilte</label>
+                                    <textarea name="editTitle" id="editTitle"></textarea>
+                                    <label for="editSubtitle">Brand</label>
+                                    <textarea name="editSubtitle" id="editSubtitle"></textarea>
+                                    <label for="editSpecs">Details</label>
+                                    <textarea name="editSpecs" id="editSpecs"></textarea>
+                                </div>
                             </div>
                             <div class="availability">
                                 <strong>

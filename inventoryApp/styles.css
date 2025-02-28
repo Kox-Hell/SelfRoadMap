@@ -215,7 +215,8 @@ h2 {
     color: #4b03a3;
 }
 
-#cancelAddProduct {
+#cancelAddProduct, 
+#cancelEditProductButton {
     width: 150px;
     height: 43px;
     border-radius: 20px;
@@ -226,13 +227,15 @@ h2 {
 }
 
 #cancelAddProduct:hover, 
-#cancelAddCategory:hover {
+#cancelAddCategory:hover, 
+#cancelEditProductButton:hover {
     background-color: rgb(248, 64, 64);
     border: 2px solid rgb(248, 64, 64);
     color: #4b03a3;
 }
 
-#acceptProductButton {
+#acceptProductButton, 
+#acceptEditProduct {
     width: 150px;
     height: 43px;
     padding: 8px;
@@ -245,7 +248,8 @@ h2 {
 }
 
 #acceptProductButton:hover, 
-#acceptCategoryButton:hover {
+#acceptCategoryButton:hover, 
+#acceptEditProduct:hover {
     background-color: rgb(119, 119, 248);
     border: 2px solid rgb(119, 119, 248);
     color: white;
@@ -437,7 +441,7 @@ h2 {
     width: 400px;
     height: auto;
     min-height: 530px;
-    max-height: 590px;
+    max-height: 630px;
     padding: 32px;
     border-radius: 20px;
     border: 2px solid #4b03a3;
@@ -606,6 +610,10 @@ label {
     gap: 20px;
 }
 
+.buttonsContainer {
+    position: relative;
+}
+
 .deleteProductButton {
     width: 150px;
     height: 43px;
@@ -680,15 +688,15 @@ label {
 /*---------------------------------------JAVASCRIPT-------------------------------------------*/
 
 .productCategory { /*Principal*/
-    display: flex;
+    display: none;
 }
 
 .productPageCategory { /*Principal*/
-    display: none;
+    display: block;
 }
 
 .productPageContainer { /*Principal*/
-    display: none;
+    display: block;
 }
 
 .categoriesContainer { /*Principal*/
@@ -707,7 +715,7 @@ label {
 #acceptProductButton, 
 #cancelAddProduct, 
 #cancelAddCategory, 
-#acceptCategoryButton,
+#acceptCategoryButton, 
 .addProducts, 
 .addCategories {
     display: none;
@@ -813,6 +821,39 @@ label {
     right: -65%;
 }
 
+/*--------------------------------------Edit Button-------------------------------------------*/
+
+.editMenu {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    top: 111%;
+    right: 0%;
+    width: 400px;
+    height: auto;
+    padding: 32px;
+    border-radius: 20px;
+    border: 2px solid #4b03a3;
+    background-color: #d0b1f2;
+}
+
+#editTitle, #editSubtitle, #editSpecs {
+    width: 100%;
+    height: 100px;
+    max-height: 100px;
+    resize: none;
+    border-radius: 20px;
+    padding: 10px;
+    max-width: 330px;
+    border: 1px solid #AB70F2;
+}
+
+#editTitle:focus, 
+#editSubtitle:focus, 
+#editSpecs:focus {
+    outline: none;
+    border: 2px solid #4b03a3;
+}
 
 
 
