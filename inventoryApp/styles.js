@@ -1,6 +1,7 @@
 //Variables Globales
 const sbProductButton = document.getElementById('productButton');
 const sbCategoriesButton = document.getElementById('categoriesButton');
+const sbHomeButton = document.getElementById('homeButton');
 
 const newProductButton = document.getElementById('newProductButton');//Boton principal
 const newCategoryButton = document.getElementById('newCategoryButton');//Boton principal
@@ -10,6 +11,8 @@ const acceptCategoryButton = document.getElementById('acceptCategoryButton');//B
 
 const cancelNewProductButton = document.getElementById('cancelAddProduct');//Boton Secundario
 const cancelNewCategoryButton = document.getElementById('cancelAddCategory');//Boton Secundario
+
+const deleteProductButtonMain = document.getElementById('deleteProductButtonMain');
 
 const newProductMenu = document.querySelector('.addProducts');
 const prueba = document.querySelector('.prueba');
@@ -34,50 +37,82 @@ const errorHeightIncrement = 10;
 
 let eventListenerAdded = false;//Para sideBarProductButton()
 
+//Funcion para ver ID y Class de lo que se haga click
+function whatsTheIdAndClass() {
+    document.addEventListener('click', function(event) {
+        let target = event.target;
+        console.log('ID:', target.id);
+        console.log('Class:', target.className);
+    })
+} 
+whatsTheIdAndClass();
+
 document.addEventListener('DOMContentLoaded', function() {
     createProductPage();
     showProductPage();
-    showCategoryPage();
+    createCategoryPage();
 });
 
 //Funcion para click en SideBar Buttons
 function sideBarProductButton() {
-    if (eventListenerAdded) return;
     let productMainPage = document.getElementById('productMainPage');
     let categoryMainPage = document.getElementById('categoriesMainPage');
     let productPage = document.getElementById('productPageContainer');
-    let categoryPage = document.querySelector('.categoryPage');
-    
+    let homeMainPage = document.getElementById('homeScreen');
+    let categoryPages = document.querySelectorAll('.categoryPage');
+    let categoryPageContainer = document.getElementById('categoryPageContainer');
+
     document.addEventListener('click', function(event) {
-        let targetProduct = event.target.closest('#productButton');
+        let targetProduct = event.target.closest('#productButton'); //Product Button
         if (targetProduct) {
             console.log('Product Button funciona bien');
-            if (getComputedStyle(categoryMainPage).display !== 'none'
-            || getComputedStyle(productPage).display !== 'none') {
-                productPage.style.display = 'none';
-                categoryMainPage.style.display = 'none';
-                productMainPage.style.display = 'flex';
-            }
+            productMainPage.style.display = 'flex';
+            categoryMainPage.style.display = 'none';
+            productPage.style.display = 'none';
+            homeMainPage.style.display = 'none';
+            
+            if (categoryPageContainer) categoryPageContainer.style.display = 'none';
+            categoryPages.forEach(function(page) {
+                page.style.display = 'none';
+            });
         }
-        let targetCategory = event.target.closest('#categoriesButton');
+
+        let targetHome = event.target.closest('#homeButton'); //Home Button
+        if (targetHome) {
+            console.log('Home Button funciona bien');
+            productMainPage.style.display = 'none';
+            categoryMainPage.style.display = 'none';
+            productPage.style.display = 'none';
+            homeMainPage.style.display = 'flex';
+            
+            // Hide category page container and all category pages
+            if (categoryPageContainer) categoryPageContainer.style.display = 'none';
+            categoryPages.forEach(function(page) {
+                page.style.display = 'none';
+            });
+        }
+
+        let targetCategory = event.target.closest('#categoriesButton'); //Categories Button
         if (targetCategory) {
             console.log('Category Button funciona bien');
-            if (getComputedStyle(productMainPage).display !== 'none'
-            || getComputedStyle(productPage).display !== 'none') {
-                productPage.style.display = 'none';
-                categoryMainPage.style.display = 'flex';
-                productMainPage.style.display = 'none';
-            }
+            productMainPage.style.display = 'none';
+            categoryMainPage.style.display = 'flex';
+            productPage.style.display = 'none';
+            homeMainPage.style.display = 'none';
+            
+            // Hide category page container and all category pages
+            if (categoryPageContainer) categoryPageContainer.style.display = 'none';
+            categoryPages.forEach(function(page) {
+                page.style.display = 'none';
+            });
         }
     });
-    eventListenerAdded = true;
 }
 sideBarProductButton();
 
-//Funcion para ver Product Page Selectivo
+//Funcion para mostrar Product Page Selectivo
 function showProductPage() {
     let productMainPage = document.getElementById('productMainPage');
-
     document.addEventListener('click', function(event) {
         let elementClicked = event.target.closest("[id^='sku-']"); //sku-X
         if (elementClicked) {
@@ -193,7 +228,7 @@ document.addEventListener('click', function(event) {
 }
 
 //Funcion para mostrar Category Page
-function showCategoryPage() {
+function showCategoryPageMain() {
     document.addEventListener('click', function(event) {
         let target = event.target.closest('.innerCard');
         if (target) {
@@ -214,7 +249,7 @@ function showCategoryPage() {
         }
     })
 }
-showCategoryPage();
+showCategoryPageMain();
 
 //Funcion para mostrar Menu Agregar Producto, Agregar Categoria, uso de Cancel New Product Button y Cancel New Category Button
 function showMenus() {
@@ -344,16 +379,15 @@ renderProducts();
 
 //Funcion para hacer push a nuevo producto con Accept Button
 function pushNewProduct() {
+    // Agregando listener para inputs en el menú de nuevo producto
     newProductMenu.addEventListener("input", function(event) {
         let target = event.target;
         let categorySelection = document.getElementById('productCategory');
         let uploadProductImage = document.getElementById('uploadImageInput');
-        let codeInput = document.getElementById('productCode');
-        
         categorySelection.addEventListener('change', function(event) {
             inputValues["category"] = event.target.value; // se guarda la categoría seleccionada
+            console.log('Caegoria seleccionada:', event.target.value);
         });
-
         uploadProductImage.addEventListener('change', function(event) {
             const file = event.target.files[0];
             if (file) {
@@ -364,25 +398,46 @@ function pushNewProduct() {
                 reader.readAsDataURL(file);
             }
         });
-
         if (target.tagName === "INPUT") {
             inputValues[target.name] = target.value;
             console.log("Actualizando inputValues:", inputValues);
         }
     });
-
     acceptProductButton.addEventListener("click", function() {
-        inputValues["name"] = document.getElementById('productName').value;
-        inputValues["stock"] = document.getElementById('productQuantity').value; // stock es el valor de quantity
-        inputValues["id"] = "sku-" + document.getElementById('productCode').value; // id en formato sku-X donde X es el código ingresado
-        let newProduct = { ...inputValues };//Sirve para clonar lo que va despues de los ...
+        let productName = document.getElementById('productName').value; 
+        let productQuantity = document.getElementById('productQuantity').value; 
+        let productPrice = document.getElementById('productPrice').value; 
+        let productCode = document.getElementById('productCode').value; 
+        let productCategory = document.getElementById('productCategory').value; 
+        let fileInput = document.getElementById('uploadImageInput'); 
+        let hasImage = fileInput.files.length > 0; 
+        if (!productName 
+            || !productQuantity 
+            || !productPrice 
+            || !productCode 
+            || !productCategory 
+            || !hasImage) {
+            alert("All fields must be filled, including Choose a Category and Upload Product Image"); 
+            return; 
+        }
+        inputValues["name"] = productName;
+        inputValues["stock"] = productQuantity; 
+        inputValues["id"] = "sku-" + productCode; 
+        inputValues["price"] = productPrice;
+        inputValues["category"] = productCategory;
+        let newProduct = { ...inputValues };
         sourceOfTruthProduct.push(newProduct);
         console.log("Producto agregado:", newProduct);
-        inputValues = {};
-        let inputs = newProductMenu.querySelectorAll("input");
+        inputValues = {};// Reiniciando el objeto inputValues
+        let inputs = newProductMenu.querySelectorAll("input");// Reiniciando los campos del formulario
         inputs.forEach(function(input) {
             input.value = "";
         });
+        document.getElementById('productCategory').value = ""; // Reiniciando el select de categoría
+        newProductMenu.style.display = 'none';
+        cancelNewProductButton.style.display = 'none';
+        acceptProductButton.style.display = 'none';
+        newProductButton.style.display = 'block';
         renderProducts();
     });
 }
@@ -393,10 +448,29 @@ function deleteSelectedProduct() {
     document.addEventListener('change', function(event) {
         if (event.target.matches('input[type="checkbox"][aria-controls]')) {
             let targetId = event.target.getAttribute('aria-controls');
-            let targetDiv = document.getElementById(targetId);
+            let targetDiv = document.getElementById(`productMainAncestor-${targetId}`);
             if (targetDiv) {
                 console.log('Si funciona');
                 cancelNewProductButton.style.display = 'block';
+                newProductButton.style.display = 'none';
+                deleteProductButtonMain.style.display = 'block';
+                deleteProductButtonMain.addEventListener('click', function()  {
+                    let result = confirm('Are you sure you want to delete this? This action cannot be undone');
+                    if (result) {
+                        targetDiv.remove();
+                        event.target.checked = false;
+                        cancelNewProductButton.style.display = 'none';
+                        newProductButton.style.display = 'block';
+                        deleteProductButtonMain.style.display = 'none';
+                        console.log('Usuario acepto borrar producto');
+                    }else {
+                        event.target.checked = false;
+                        cancelNewProductButton.style.display = 'none';
+                        newProductButton.style.display = 'block';
+                        deleteProductButtonMain.style.display = 'none';
+                        console.log('Usuario cancelo borrar producto');
+                    }
+                })
             }
         } 
 
@@ -404,3 +478,244 @@ function deleteSelectedProduct() {
 }
 deleteSelectedProduct();
 
+//Funcion para ver Category Page Selectivo
+function shoCategoryPage() {
+    document.addEventListener('click', function(event) {
+        let target = event.target;
+        let categoryClicked = target.closest("[id^='cat-']");
+        if (categoryClicked) {
+            let idClickeado = categoryClicked.id;
+            let idPagina = 'categoryPage-' + idClickeado;
+            let pagina = document.getElementById(idPagina);
+            let categoryPageContainer = document.getElementById('categoryPageContainer');
+            if (pagina) {
+                let productMainPage = document.getElementById('productMainPage');
+                let categoryMainPage = document.getElementById('categoriesMainPage');
+                let productPage = document.getElementById('productPageContainer');
+                pagina.style.display = 'block';
+                categoryPageContainer.style.display = 'block';
+                productMainPage.style.display = 'none';
+                categoryMainPage.style.display = 'none';
+                productPage.style.display = 'none';
+            }else {
+                console.log('Category Page Doesnt Exist');
+            }
+        }
+    })
+}
+shoCategoryPage(); 
+
+
+//Funcion para ver Category Page Selectivo
+function showCategoryPage() {
+    document.addEventListener('click', function(event) {
+        let target = event.target;
+        let categoryClicked = target.closest("[id^='cat-']");
+        if (categoryClicked) {
+            let idClickeado = categoryClicked.id;
+            let idPagina = 'categoryPage-' + idClickeado;
+            let pagina = document.getElementById(idPagina);
+            let categoryPageContainer = document.getElementById('categoryPageContainer');
+            if (pagina) {
+                let productMainPage = document.getElementById('productMainPage');
+                let categoryMainPage = document.getElementById('categoriesMainPage');
+                let productPage = document.getElementById('productPageContainer');
+                let homeMainPage = document.getElementById('homeScreen');
+                productMainPage.style.display = 'none';
+                categoryMainPage.style.display = 'none';
+                productPage.style.display = 'none';
+                homeMainPage.style.display = 'none';
+
+                let allCategoryPages = document.querySelectorAll('.categoryPage');
+                allCategoryPages.forEach(function(page) {
+                    page.style.display = 'none';
+                });
+
+                pagina.style.display = 'block';
+                categoryPageContainer.style.display = 'block';
+            }else {
+                console.log('Category Page Doesnt Exist');
+            }
+        }
+    })
+}
+showCategoryPage(); 
+
+
+//Funcion para crear CategoryPage dinamicamente
+function createCategoryPage() {
+    let categoriesContainer = document.querySelector('.cardsContainer');
+    categoriesContainer.addEventListener('click', function(event) {
+        let target = event.target;
+        let cardClicked = target.closest("[id^='cat-']");//Obtiene class:"cards" y id:"cat-XXXX"
+        if (!cardClicked) return;
+        //Obtener informacion relevante de lo que se dio click
+        let title = cardClicked.querySelector('.cardText .title').textContent;//Obtiene Title de la Category
+        let idClickeado = cardClicked.id;//Obtiene id:"cat-XXXX"
+        let idPagina = 'categoryPage-' + idClickeado;//Obtiene categoryPage-cat-XXXX
+        // Verificar si la página ya existe
+        if (document.getElementById(idPagina)) {
+            console.log('La página ya existe:', idPagina);
+            showCategoryPage(idPagina);
+            return;
+        }
+        //Contenedor Padre padre
+        let fatherContainer = document.getElementById('categoryPageContainer');//Bien
+        //Crea el nuevo contenedor con la pagina de la categoria
+        let categoryPage = document.createElement('div');
+        categoryPage.classList.add('categoryPage');
+        categoryPage.id = idPagina;
+        categoryPage.innerHTML = 
+        `
+    <div class="productsHeader">
+        <h2 class="lgTxt">Category - ${title}</h2>
+        <div class="searchInputContainerProduct">
+        <input
+            type="search"
+            class="input"
+            placeholder="Search product..."
+            oninput="buscarProducto()"
+            autocomplete="off"
+        />
+        <img src="assets/icons8-search-50.png" alt="" />
+        </div>
+        <div class="productButtonsContainer">
+            <button style="z-index: 2;" type="button" class="button" >
+            + New Product
+            </button>
+            <button style="z-index: 1;" type="button" class="button" >
+            Cancel
+            </button>
+            <button style="z-index: 2;" type="button" class="button" >
+                Delete
+            </button>
+        </div>
+    </div>
+    <div class="productToolBar">
+        <div class="toolContainer">
+            <input type="checkbox" class="checkInput" />
+        </div>
+        <div class="toolContainer">
+            <p class="tool">Image</p>
+            <button class="sort">^</button>
+        </div>
+        <div class="toolContainer">
+            <p class="tool">Name of product</p>
+            <button class="sort">^</button>
+        </div>
+        <div class="toolContainer">
+            <p class="tool">Status</p>
+            <button class="sort">^</button>
+        </div>
+        <div class="toolContainer">
+            <p class="tool">Stock Info</p>
+            <button class="sort">^</button>
+        </div>
+        <div class="toolContainer">
+            <p class="tool">Category</p>
+            <button class="sort">^</button>
+        </div>
+        <div class="prueba">
+            <div class="addProducts">
+                <div class="nameMessageContainer">
+                    <label for="productName">Product Name</label>
+                    <input
+                        placeholder="Name"
+                        type="text"
+                        required
+                        minlength="2"
+                        maxlength="100"
+                        pattern="[A-Za-z0-9\s]+"
+                        class="input"
+                        name="nameAddCategory"
+                    />
+                    <p class="errorMessage">
+                        This input cannot be empty.
+                    </p>
+                </div>
+                <div class="quantityMessageContainer">
+                    <label for="productQuantityCategory">Product Quantity</label>
+                    <input
+                        placeholder="Quantity"
+                        id="productQuantityCategory"
+                        type="number"
+                        required
+                        min="1"
+                        step="1"
+                        class="input"
+                        name="VERIFICAR"
+                    />
+                    <p class="errorMessage">
+                        This input cannot be empty.
+                    </p>
+                </div>
+                <div class="priceMessageContainer">
+                    <label for="productPriceCategory">Product Price</label>
+                    <input
+                        placeholder="Price"
+                        id="productPriceCategory"
+                        type="number"
+                        required
+                        min="0.01"
+                        step="0.01"
+                        class="input"
+                        name="VERIFICAR"
+                    />
+                    <p class="errorMessage">
+                        This input cannot be empty.
+                    </p>
+                </div>
+                <div class="codeMessageContainer">
+                    <label for="productCodeCategory">Product Code</label>
+                    <input
+                        placeholder="Code"
+                        id="productCodeCategory"
+                        type="text"
+                        required
+                        minlength="3"
+                        maxlength="20"
+                        pattern="[A-Za-z0-9]+"
+                        class="input"
+                        name="VERIFICAR"
+                    />
+                    <p class="errorMessage">
+                        This input cannot be empty.
+                    </p>
+                </div>
+                <label for="productCategoryCat">Category</label>
+                <select
+                    id="productCategoryCat"
+                    required
+                    class="input"
+                    name="categoryCat"
+                >
+                    <option value="chooseCategory">Choose a Category</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Jewelry">Jewelry</option>
+                    <option value="Perfumes">Perfumes</option>
+                    <option value="Clothing">Clothing</option>
+                    <option value="Beauty">Beauty</option>
+                    <option value="On Sale">On Sale</option>
+                </select>
+                <div class="uploadImageMessageContainer">
+                    <label id="uploadImageCat" for="uploadImageCatInput">Upload Product Image</label>
+                    <input id="uploadImageCatInput" class="hidden" type="file" accept="image/png, image/jpeg, image/jpg" required>
+                    <p class="errorMessage">
+                        This input cannot be empty.
+                    </p>
+                </div>
+                <button type="button" class="button" id="acceptProductButtonCat">
+                    Accept
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id="VERIFICAR"><!--sOURCEoFtRUTH?-->
+        <!--Aca se rellena con pRODUCTOS DE LA CATEGORIA-->
+    </div>
+`;
+        fatherContainer.appendChild(categoryPage);
+        console.log('Página creada:', idPagina);
+    });
+}
+createCategoryPage();

@@ -31,6 +31,10 @@
             </div>
             <div class="sideBar">
             <div class="sidebarButtons">
+                <div class="sbButtons" id="homeButton">
+                    <img src="assets/icons8-home-50.png" alt="" />
+                    <p>Home</p>
+                </div>
                 <div id="productButton" class="sbButtons">
                 <img src="assets/icons8-shopping-bag-50.png" alt="" />
                 <p>Products</p>
@@ -40,6 +44,45 @@
                 <p>Categories</p>
                 </div>
             </div>
+            </div>
+            <div class="homeScreen" id="homeScreen">
+                <div class="productsHeader">
+                    <h2 class="lgTxt">Recent Activity</h2>
+                    <div class="searchInputContainerProduct">
+                    <input
+                        type="search"
+                        id="searchProducts"
+                        class="input"
+                        placeholder="Search product..."
+                        oninput="buscarProducto()"
+                        autocomplete="off"
+                    />
+                    <img src="assets/icons8-search-50.png" alt="" />
+                    </div>
+                </div>
+                <div class="homeCards" id="homeCards">
+                    <div class="numberOfProducts" id="numberOfProducts">
+                        <div class="itemNumber" id="itemNumber">
+                            <!--Crear dinamicamente-->
+                        </div>
+                        <p class="Qty">Qty</p>
+                        <p class="cardTitle">Number of Products</p>
+                    </div>
+                    <div class="categoriesNumberContainer" id="categoriesNumberContainer">
+                        <div class="numberOfCategories" id="numberOfCategories">
+                            <!--Crear dinamicamente-->
+                        </div>
+                        <p class="Qty">Qty</p>
+                        <p class="cardTitle">Number of Categories</p>
+                    </div>
+                    <div class="lowStockItemsContainer" id="lowStockItemsContainer">
+                        <div class="lowStock" id="lowStock">
+                            <!--Crear dinamicamente-->
+                        </div>
+                        <p class="Qty">Qty</p>
+                        <p class="cardTitle">3 Products with Lowest Stock</p>
+                    </div>
+                </div>
             </div>
             <div id="productMainPage" class="productCategory">
                 <div class="productsHeader">
@@ -61,6 +104,9 @@
                         </button>
                         <button style="z-index: 1;" type="button" class="button" id="cancelAddProduct">
                         Cancel
+                        </button>
+                        <button style="z-index: 2;" type="button" class="button" id="deleteProductButtonMain">
+                            Delete
                         </button>
                     </div>
                 </div>
@@ -200,7 +246,7 @@
                     </button>
                 </div>
                 <div class="cardsContainer">
-                    <div class="cards" id="electronics">
+                    <div class="cards" id="cat-electronics">
                         <div class="innerCard">
                             <img src="assets/icons8-electronics-50.png" alt="" />
                         </div>
@@ -209,7 +255,7 @@
                             <p class="subtitle">0 Items</p>
                         </div>
                     </div>
-                    <div class="cards" id="jewelry">
+                    <div class="cards" id="cat-jewelry">
                         <div class="innerCard">
                             <img src="assets/icons8-ring-side-view-50.png" alt="" />
                         </div>
@@ -218,7 +264,7 @@
                             <p class="subtitle">0 Items</p>
                         </div>
                     </div>
-                    <div class="cards" id="perfumes">
+                    <div class="cards" id="cat-perfumes">
                         <div class="innerCard">
                             <img src="assets/icons8-perfume-50.png" alt="" />
                         </div>
@@ -227,7 +273,7 @@
                             <p class="subtitle">0 Items</p>
                         </div>
                     </div>
-                    <div class="cards" id="clothing">
+                    <div class="cards" id="cat-clothing">
                         <div class="innerCard">
                             <img src="assets/icons8-clothes-50.png" alt="" />
                         </div>
@@ -236,7 +282,7 @@
                             <p class="subtitle">0 Items</p>
                         </div>
                     </div>
-                    <div class="cards" id="beauty">
+                    <div class="cards" id="cat-beauty">
                         <div class="innerCard">
                             <img src="assets/icons8-lipstick-50.png" alt="" />
                         </div>
@@ -245,7 +291,7 @@
                             <p class="subtitle">0 Items</p>
                         </div>
                     </div>
-                    <div class="cards" id="onSale">
+                    <div class="cards" id="cat-onSale">
                         <div class="innerCard">
                             <img src="assets/icons8-sale-50.png" alt="" />
                         </div>
@@ -277,7 +323,7 @@
                 <!--Se crea dinamicamente-->
             </div>
             <div id="categoryPageContainer" class="categoryPageContainer">
-                
+                <!--Se crea dinamicamente-->
             </div>
         </div>
     </main>

@@ -133,8 +133,11 @@ button:hover {
     height: 20px;
 }
 
-.productCategory, .categoriesContainer, 
-#productsMainPage, #categoriesMainPage {
+.productCategory, 
+.categoriesContainer, 
+#productsMainPage, 
+#categoriesMainPage, 
+#homeScreen {
     position: relative;
     flex-direction: column;
     grid-area: ui;
@@ -516,7 +519,7 @@ label {
 
 #productName, #productQuantity, #productPrice,
 #productCode, #productCategory,
-#categoryName, #uploadImage {
+#categoryName, #uploadImage, #uploadImageCat {
     width: 330px;
     padding: 10px;
     border-radius: 20px;
@@ -653,6 +656,22 @@ label {
     color: #4b03a3;
     font-size: 18px;
 }
+#deleteProductButtonMain {
+    display: none;
+    width: 150px;
+    height: 43px;
+    margin-left: 20px;
+    border-radius: 20px;
+    border: 1px solid orange;
+    background-color: orange;
+    color: white;
+    font-size: 18px;
+}
+
+#deleteProductButtonMain:hover {
+    border: 2px solid orange;
+    background-color: red;
+}
 
 .editProductButton {
     background-color: #4b03a3;
@@ -720,7 +739,7 @@ label {
 /*---------------------------------------JAVASCRIPT-------------------------------------------*/
 
 .productCategory { /*Principal*/
-    display: flex;
+    display: none;
 }
 
 .productPageCategory { /*Principal*/
@@ -732,6 +751,10 @@ label {
 }
 
 .categoriesContainer, .categoriesMainPage { /*Principal Borrar categoriesMainPage*/
+    display: flex;
+}
+
+.homeScreen {
     display: none;
 }
 
@@ -751,10 +774,11 @@ label {
 #acceptProductButton, 
 #cancelAddProduct, 
 #cancelAddCategory, 
-#acceptCategoryButton, 
+#acceptCategoryButton,
+#acceptProductButtonCat, 
+#categoryPageContainer,  
 .acceptEditProduct, 
-.cancelEditProductButton, 
-#categoryPageContainer {
+.cancelEditProductButton {
     display: none;
 }
 
