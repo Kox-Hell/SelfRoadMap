@@ -31,6 +31,10 @@
             </div>
             <div class="sideBar">
             <div class="sidebarButtons">
+                <div class="sbButtons" id="homeButton">
+                    <img src="assets/icons8-home-50.png" alt="" />
+                    <p>Home</p>
+                </div>
                 <div id="productButton" class="sbButtons">
                 <img src="assets/icons8-shopping-bag-50.png" alt="" />
                 <p>Products</p>
@@ -41,7 +45,46 @@
                 </div>
             </div>
             </div>
-            <div class="productCategory">
+            <div class="homeScreen" id="homeScreen">
+                <div class="productsHeader">
+                    <h2 class="lgTxt">Recent Activity</h2>
+                    <div class="searchInputContainerProduct">
+                    <input
+                        type="search"
+                        id="searchProducts"
+                        class="input"
+                        placeholder="Search product..."
+                        oninput="buscarProducto()"
+                        autocomplete="off"
+                    />
+                    <img src="assets/icons8-search-50.png" alt="" />
+                    </div>
+                </div>
+                <div class="homeCards" id="homeCards">
+                    <div class="numberOfProducts" id="numberOfProducts">
+                        <div class="itemNumber" id="itemNumber">
+                            <!--Crear dinamicamente-->
+                        </div>
+                        <p class="Qty">Qty</p>
+                        <p class="cardTitle">Number of Products</p>
+                    </div>
+                    <div class="categoriesNumberContainer" id="categoriesNumberContainer">
+                        <div class="numberOfCategories" id="numberOfCategories">
+                            <!--Crear dinamicamente-->
+                        </div>
+                        <p class="Qty">Qty</p>
+                        <p class="cardTitle">Number of Categories</p>
+                    </div>
+                    <div class="lowStockItemsContainer" id="lowStockItemsContainer">
+                        <div class="lowStock" id="lowStock">
+                            <!--Crear dinamicamente-->
+                        </div>
+                        <p class="Qty">Qty</p>
+                        <p class="cardTitle">3 Products with Lowest Stock</p>
+                    </div>
+                </div>
+            </div>
+            <div id="productMainPage" class="productCategory">
                 <div class="productsHeader">
                     <h2 class="lgTxt">Products</h2>
                     <div class="searchInputContainerProduct">
@@ -62,6 +105,9 @@
                         <button style="z-index: 1;" type="button" class="button" id="cancelAddProduct">
                         Cancel
                         </button>
+                        <button style="z-index: 2;" type="button" class="button" id="deleteProductButtonMain">
+                            Delete
+                        </button>
                     </div>
                 </div>
                 <div class="productToolBar">
@@ -69,8 +115,8 @@
                         <input type="checkbox" id="borrar" class="checkInput" />
                     </div>
                     <div class="toolContainer">
-                        <p class="tool" id="nameProduct">Image</p>
-                        <button class="sort" id="byName">^</button>
+                        <p class="tool" id="imageProduct">Image</p>
+                        <button class="sort" id="byImage">^</button>
                     </div>
                     <div class="toolContainer">
                         <p class="tool" id="nameProduct">Name of product</p>
@@ -88,108 +134,108 @@
                         <p class="tool" id="categoryProduct">Category</p>
                         <button class="sort" id="byCategory">^</button>
                     </div>
-                </div>
-                <div id="sourceOfTruthContainer">
-                    <!--Aca se rellena con Source of Truth-->
-                </div>
-                <div class="prueba">
-                    <div class="addProducts" id="addProducts">
-                        <div class="nameMessageContainer">
-                            <label for="productName">Product Name</label>
-                            <input
-                                placeholder="Name"
-                                id="productName"
-                                type="text"
+                    <div id="prueba" class="prueba">
+                        <div class="addProducts" id="addProducts">
+                            <div class="nameMessageContainer">
+                                <label for="productName">Product Name</label>
+                                <input
+                                    placeholder="Name"
+                                    id="productName"
+                                    type="text"
+                                    required
+                                    minlength="2"
+                                    maxlength="100"
+                                    pattern="[A-Za-z0-9\s]+"
+                                    class="input"
+                                    name="nameAddProduct"
+                                />
+                                <p class="errorMessage">
+                                    This input cannot be empty.
+                                </p>
+                            </div>
+                            <div class="quantityMessageContainer">
+                                <label for="productQuantity">Product Quantity</label>
+                                <input
+                                    placeholder="Quantity"
+                                    id="productQuantity"
+                                    type="number"
+                                    required
+                                    min="1"
+                                    step="1"
+                                    class="input"
+                                    name="quantity"
+                                />
+                                <p class="errorMessage">
+                                    This input cannot be empty.
+                                </p>
+                            </div>
+                            <div class="priceMessageContainer">
+                                <label for="productPrice">Product Price</label>
+                                <input
+                                    placeholder="Price"
+                                    id="productPrice"
+                                    type="number"
+                                    required
+                                    min="0.01"
+                                    step="0.01"
+                                    class="input"
+                                    name="price"
+                                />
+                                <p class="errorMessage">
+                                    This input cannot be empty.
+                                </p>
+                            </div>
+                            <div class="codeMessageContainer">
+                                <label for="productCode">Product Code</label>
+                                <input
+                                    placeholder="Code"
+                                    id="productCode"
+                                    type="text"
+                                    required
+                                    minlength="3"
+                                    maxlength="20"
+                                    pattern="[A-Za-z0-9]+"
+                                    class="input"
+                                    name="code"
+                                />
+                                <p class="errorMessage">
+                                    This input cannot be empty.
+                                </p>
+                            </div>
+                            <label for="productCategory">Category</label>
+                            <select
+                                name="categoryProduct"
+                                id="productCategory"
                                 required
-                                minlength="2"
-                                maxlength="100"
-                                pattern="[A-Za-z0-9\s]+"
                                 class="input"
-                                name="name"
-                            />
-                            <p class="errorMessage">
-                                This input cannot be empty.
-                            </p>
+                                name="category"
+                            >
+                                <option value="chooseCategory">Choose a Category</option>
+                                <option value="Electronics">Electronics</option>
+                                <option value="Jewelry">Jewelry</option>
+                                <option value="Perfumes">Perfumes</option>
+                                <option value="Clothing">Clothing</option>
+                                <option value="Beauty">Beauty</option>
+                                <option value="On Sale">On Sale</option>
+                            </select>
+                            <div class="uploadImageMessageContainer">
+                                <label id="uploadImage" for="uploadImageInput">Upload Product Image</label>
+                                <input id="uploadImageInput" class="hidden" type="file" accept="image/png, image/jpeg, image/jpg" required>
+                                <p class="errorMessage">
+                                    This input cannot be empty.
+                                </p>
+                            </div>
+                            <button type="button" class="button" id="acceptProductButton">
+                                Accept
+                            </button>
                         </div>
-                        <div class="quantityMessageContainer">
-                            <label for="productQuantity">Product Quantity</label>
-                            <input
-                                placeholder="Quantity"
-                                id="productQuantity"
-                                type="number"
-                                required
-                                min="1"
-                                step="1"
-                                class="input"
-                                name="quantity"
-                            />
-                            <p class="errorMessage">
-                                This input cannot be empty.
-                            </p>
-                        </div>
-                        <div class="priceMessageContainer">
-                            <label for="productPrice">Product Price</label>
-                            <input
-                                placeholder="Price"
-                                id="productPrice"
-                                type="number"
-                                required
-                                min="0.01"
-                                step="0.01"
-                                class="input"
-                                name="price"
-                            />
-                            <p class="errorMessage">
-                                This input cannot be empty.
-                            </p>
-                        </div>
-                        <div class="codeMessageContainer">
-                            <label for="productCode">Product Code</label>
-                            <input
-                                placeholder="Code"
-                                id="productCode"
-                                type="text"
-                                required
-                                minlength="3"
-                                maxlength="20"
-                                pattern="[A-Za-z0-9]+"
-                                class="input"
-                                name="code"
-                            />
-                            <p class="errorMessage">
-                                This input cannot be empty.
-                            </p>
-                        </div>
-                        <label for="productCategory">Category</label>
-                        <select
-                            name="category"
-                            id="productCategory"
-                            required
-                            class="input"
-                            name="category"
-                        >
-                            <option value="chooseCategory">Choose a Category</option>
-                            <option value="Electronics">Electronics</option>
-                            <option value="Jewelry">Jewelry</option>
-                            <option value="Perfumes">Perfumes</option>
-                            <option value="Clothing">Clothing</option>
-                            <option value="Beauty">Beauty</option>
-                            <option value="On Sale">On Sale</option>
-                        </select>
-                        <div class="uploadImageMessageContainer">
-                            <label id="uploadImage" for="uploadImageInput">Upload Product Image</label>
-                            <input id="uploadImageInput" class="hidden" type="file" accept="image/png, image/jpeg, image/jpg" required>
-                            <p class="errorMessage">
-                                This input cannot be empty.
-                            </p>
-                        </div>
-                        <button type="button" class="button" id="acceptProductButton">
-                            Accept
-                        </button>
                     </div>
                 </div>
+                <div id="sourceOfTruthProductContainer">
+                    <!--Aca se rellena con Source of Truth-->
+                </div>
             </div>
-            <div class="categoriesContainer">
+            <div id="categoriesMainPage" class="categoriesContainer">
                 <div class="categoriesHeader">
                     <h2>Categories</h2>
                     <button class="button" id="newCategoryButton">
@@ -200,62 +246,62 @@
                     </button>
                 </div>
                 <div class="cardsContainer">
-                    <div class="cards" id="electronics">
+                    <div class="cards" id="cat-electronics">
                         <div class="innerCard">
                             <img src="assets/icons8-electronics-50.png" alt="" />
                         </div>
                         <div class="cardText">
                             <p class="title">Electronics</p>
-                            <p class="subtitle">0 Items</p>
+                            <p class="subtitle" id="subElectronics">0 Items</p>
                         </div>
                     </div>
-                    <div class="cards" id="jewelry">
+                    <div class="cards" id="cat-jewelry">
                         <div class="innerCard">
                             <img src="assets/icons8-ring-side-view-50.png" alt="" />
                         </div>
                         <div class="cardText">
                             <p class="title">Jewelry</p>
-                            <p class="subtitle">0 Items</p>
+                            <p class="subtitle" id="subJewelry">0 Items</p>
                         </div>
                     </div>
-                    <div class="cards" id="perfumes">
+                    <div class="cards" id="cat-perfumes">
                         <div class="innerCard">
                             <img src="assets/icons8-perfume-50.png" alt="" />
                         </div>
                         <div class="cardText">
                             <p class="title">Perfumes</p>
-                            <p class="subtitle">0 Items</p>
+                            <p class="subtitle" id="subPerfumes">0 Items</p>
                         </div>
                     </div>
-                    <div class="cards" id="clothing">
+                    <div class="cards" id="cat-clothing">
                         <div class="innerCard">
                             <img src="assets/icons8-clothes-50.png" alt="" />
                         </div>
                         <div class="cardText">
                             <p class="title">Clothing</p>
-                            <p class="subtitle">0 Items</p>
+                            <p class="subtitle" id="subClothing">0 Items</p>
                         </div>
                     </div>
-                    <div class="cards" id="beauty">
+                    <div class="cards" id="cat-beauty">
                         <div class="innerCard">
                             <img src="assets/icons8-lipstick-50.png" alt="" />
                         </div>
                         <div class="cardText">
                             <p class="title">Beauty</p>
-                            <p class="subtitle">0 Items</p>
+                            <p class="subtitle" id="subBeauty">0 Items</p>
                         </div>
                     </div>
-                    <div class="cards" id="onSale">
+                    <div class="cards" id="cat-onSale">
                         <div class="innerCard">
                             <img src="assets/icons8-sale-50.png" alt="" />
                         </div>
                         <div class="cardText">
                             <p class="title">On Sale</p>
-                            <p class="subtitle">0 Items</p>
+                            <p class="subtitle" id="subOnSale">0 Items</p>
                         </div>
                     </div>
                 </div>
-                <div class="addCategories">
+                <div id="addCategories" class="addCategories">
                     <label for="categoryName">Category Name</label>
                     <input
                         placeholder="Category"
@@ -263,6 +309,7 @@
                         type="text"
                         required
                         minlength="2"
+
                         maxlength="100"
                         pattern="[A-Za-z0-9\s]+"
                         class="input"/>
@@ -273,226 +320,17 @@
                     </button>
                 </div>
             </div>
+
             <div id="productPageContainer" class="productPageContainer">
-                <div class="productPageCategory" id="page-sku-1">
-                    <div class="productPageHeader">
-                        <h2 id="sku-">Laptop Gamer</h2>
-                        <p class="lastUpdated">
-                            Last update <span class="date">February 25, 2025 at 7:41pm</span>
-                        </p>
-                    </div>
-                    <div class="productPageMain">
-                        <div class="productInfo">
-                            <div class="imageProductPage">
-                                <img src="assets/laptopGamer.webp" alt="">
-                            </div>
-                            <div class="textContainer">
-                                <p class="productName">
-                                    Laptop Gamer
-                                </p>
-                                <p class="productBrand">
-                                    Alienware
-                                </p>
-                                <p class="productSpecs">
-                                    14th Gen Intel® Core™i7 14700HX
-                                    Windows 11 Home
-                                    NVIDIA® GeForce RTX™ 4070
-                                    16 GB DDR5
-                                    1 TB SSD
-                                    18" QHD+ 165Hz, 3ms, 
-                                </p>
-                            </div>
-                        </div>
-                        <div class="productDetails">
-                            <div class="buttonsContainer">
-                                <button id="deleteProductButton" class="deleteProductButton">
-                                    Delete
-                                </button>
-                                <button id="editProductButton" class="editProductButton">
-                                    Edit Product
-                                </button>
-                                <button id="cancelEditProductButton">
-                                    Cancel
-                                </button>
-                                <button id="acceptEditProduct">
-                                    Accept
-                                </button>
-                                <div id="editMenu" class="editMenu">
-                                    <label for="editTitle">Tilte</label>
-                                    <textarea name="editTitle" id="editTitle"></textarea>
-                                    <label for="editSubtitle">Brand</label>
-                                    <textarea name="editSubtitle" id="editSubtitle"></textarea>
-                                    <label for="editSpecs">Details</label>
-                                    <textarea name="editSpecs" id="editSpecs"></textarea>
-                                </div>
-                            </div>
-                            <div class="availability">
-                                <strong>
-                                    Availability
-                                </strong>
-                                <p>
-                                    Stock: <span class="stockInfo">10</span>
-                                </p>
-                                <p>
-                                    Product SKU: <span class="productSku">1</span>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="relatedProductsContainer">
-                        <div class="textContainer">
-                            Related Products
-                        </div>
-                        <div class="relatedProducts">
-                            <div class="related"></div>
-                            <div class="related"></div>
-                            <div class="related"></div>
-                            <div class="related"></div>
-                            <div class="related"></div>
-                            <div class="related"></div>
-                            <div class="related"></div>
-                        </div>
-                    </div>
-                </div>
+                <!--Se crea dinamicamente-->
             </div>
-            <div class="categoryPage" id="page-electronics">
-                <div class="productsHeader">
-                    <h2 class="lgTxt">Categories - <span class="selectedCategory">
-                        Electronics
-                    </span></h2>
-                    <div class="searchInputContainerProduct">
-                    <input
-                        type="search"
-                        id="searchProducts"
-                        class="input"
-                        placeholder="Search product..."
-                        oninput="buscarProducto()"
-                        autocomplete="off"
-                    />
-                    <img src="assets/icons8-search-50.png" alt="" />
-                    </div>
-                    <div class="productButtonsContainer">
-                        <button style="z-index: 2;" type="button" class="button" id="newProductButton">
-                        + New Product
-                        </button>
-                        <button style="z-index: 1;" type="button" class="button" id="cancelAddProduct">
-                        Cancel
-                        </button>
-                    </div>
-                </div>
-                <div class="productToolBar">
-                    <div class="toolContainer">
-                        <input type="checkbox" id="borrar" class="checkInput" />
-                    </div>
-                    <div class="toolContainer">
-                        <p class="tool" id="nameProduct">Image</p>
-                        <button class="sort" id="byName">^</button>
-                    </div>
-                    <div class="toolContainer">
-                        <p class="tool" id="nameProduct">Name of product</p>
-                        <button class="sort" id="byName">^</button>
-                    </div>
-                    <div class="toolContainer">
-                        <p class="tool" id="statusProduct">Status</p>
-                        <button class="sort" id="byStatus">^</button>
-                    </div>
-                    <div class="toolContainer">
-                        <p class="tool" id="stockProduct">Stock Info</p>
-                        <button class="sort" id="byNumber">^</button>
-                    </div>
-                    <div class="toolContainer">
-                        <p class="tool" id="categoryProduct">Category</p>
-                        <button class="sort" id="byCategory">^</button>
-                    </div>
-                </div>
-                <div id="sourceOfTruthContainer">
-                    <!--Aca se rellena con Source of Truth-->
-                </div>
-                <div class="addProducts" id="addProducts">
-                    <div class="nameMessageContainer">
-                        <label for="productName">Product Name</label>
-                        <input
-                            placeholder="Name"
-                            id="productName"
-                            type="text"
-                            required
-                            minlength="2"
-                            maxlength="100"
-                            pattern="[A-Za-z0-9\s]+"
-                            class="input"
-                        />
-                        <p class="errorMessage">
-                            This input cannot be empty.
-                        </p>
-                    </div>
-                    <div class="quantityMessageContainer">
-                        <label for="productQuantity">Product Quantity</label>
-                        <input
-                            placeholder="Quantity"
-                            id="productQuantity"
-                            type="number"
-                            required
-                            min="1"
-                            step="1"
-                            class="input"
-                        />
-                        <p class="errorMessage">
-                            This input cannot be empty.
-                        </p>
-                    </div>
-                    <div class="priceMessageContainer">
-                        <label for="productPrice">Product Price</label>
-                        <input
-                            placeholder="Price"
-                            id="productPrice"
-                            type="number"
-                            required
-                            min="0.01"
-                            step="0.01"
-                            class="input"
-                        />
-                        <p class="errorMessage">
-                            This input cannot be empty.
-                        </p>
-                    </div>
-                    <div class="codeMessageContainer">
-                        <label for="productCode">Product Code</label>
-                        <input
-                            placeholder="Code"
-                            id="productCode"
-                            type="text"
-                            required
-                            minlength="3"
-                            maxlength="20"
-                            pattern="[A-Za-z0-9]+"
-                            class="input"
-                        />
-                        <p class="errorMessage">
-                            This input cannot be empty.
-                        </p>
-                    </div>
-                    <label for="productCategory">Category</label>
-                    <select
-                        name="category"
-                        id="productCategory"
-                        required
-                        class="input"
-                    >
-                        <option value="chooseCategory">Choose a Category</option>
-                        <option value="electronics">Electronics</option>
-                        <option value="jewelry">Jewelry</option>
-                        <option value="perfumes">Perfumes</option>
-                        <option value="clothing">Clothing</option>
-                        <option value="beauty">Beauty</option>
-                        <option value="onSale">On Sale</option>
-                    </select>
-                    <button type="button" class="button" id="acceptProductButton">
-                        Accept
-                    </button>
-                </div>
+            <div id="categoryPageContainer" class="categoryPageContainer">
+                <!--Se crea dinamicamente-->
             </div>
         </div>
     </main>
-    <script src="styles.js"></script>
-  </body>
+    <script src="styles.js" type="module"></script>
+</body>
+
 </html>
+
