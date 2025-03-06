@@ -44,17 +44,45 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 //Source of Truth
-let sourceOfTruthProduct = [
-    {   
-        name: "LapTop Gamer",
-        stock: 10,
-        price: '8000',
-        id: "sku-1",
-        status: true, // true = Active, false = Inactive
-        category: "Electronics",
-        image: "assets/laptopGamer.webp" // Ruta de la imagen
-    }
-];
+let sourceOfTruthProduct = [];
+function saveToLocalStorage(key, data) {
+    try {
+        const storedProducts = localStorage.getItem('sourceOfTruthProduct');// Intenta obtener productos de LocalStorage
+        if (storedProducts) {
+            console.log('Si encontro en LocalStorage', sourceOfTruthProduct);
+          sourceOfTruthProduct = JSON.parse(storedProducts);// Si existe productos en LocalStorage, usarlos
+        } else {// Si no hay productos, usar la base en el codigo
+            console.log('No hay nada en LocalStorage');
+          sourceOfTruthProduct = [
+            {   
+              name: "LapTop Gamer",
+              stock: 10,
+              price: '8000',
+              id: "sku-1",
+              status: true, // true = Active, false = Inactive
+              category: "Electronics",
+              image: "assets/laptopGamer.webp" // Ruta de la imagen
+            }
+          ];
+          localStorage.setItem('sourceOfTruthProduct', JSON.stringify(sourceOfTruthProduct));// Guarda los datos en el SoT del codigo
+        }
+        console.log('Products loaded from localStorage:', sourceOfTruthProduct);
+    
+      } catch (error) {
+        console.error('Error loading products from localStorage:', error);// Si hay algun error, usar el SoT del codigo
+        sourceOfTruthProduct = [
+          {   
+            name: "LapTop Gamer",
+            stock: 10,
+            price: '8000',
+            id: "sku-1",
+            status: true,
+            category: "Electronics",
+            image: "assets/laptopGamer.webp"
+          }
+        ];
+      }
+}
 
 let currentID = parseInt(localStorage.getItem("currentID")) || sourceOfTruthProduct.length; // Recuperar ID o usar el length
 localStorage.setItem("currentID", currentID + 1); // Incrementar el ID en localStorage
@@ -83,17 +111,15 @@ function renderProducts() {
                 <p style="display: none;" class="price">${product.price}</p>
             </div>
         `;
-
         fatherContainer.appendChild(productMainAncestorDiv);//Introduce productContainer al inicio del fatherContainer que es SourceOfTruthProductContainer
     });
     // Guardar el estado actualizado en localStorage
-    localStorage.setItem("sourceOfTruthProduct", JSON.stringify(sourceOfTruthProduct));
-}
+    localStorage.setItem("sourceOfTruthProduct", JSON.stringify(sourceOfTruthProduct));}
+    saveToLocalStorage("sourceOfTruthProduct", sourceOfTruthProduct);
 renderProducts();
 
 //Funcion para hacer push a nuevo producto con Accept Button
 function pushNewProduct() {
-    // Agregando listener para inputs en el menú de nuevo producto
     newProductMenu.addEventListener("input", function(event) {
         let target = event.target;
         let categorySelection = document.getElementById('productCategory');
@@ -141,6 +167,8 @@ function pushNewProduct() {
         inputValues["category"] = productCategory;
         let newProduct = { ...inputValues };
         sourceOfTruthProduct.push(newProduct);
+        localStorage.setItem("sourceOfTruthProduct", JSON.stringify(sourceOfTruthProduct));
+        saveToLocalStorage("sourceOfTruthProduct", sourceOfTruthProduct);
         console.log("Producto agregado:", newProduct);
         inputValues = {};// Reiniciando el objeto inputValues
         let inputs = newProductMenu.querySelectorAll("input");// Reiniciando los campos del formulario
@@ -152,6 +180,7 @@ function pushNewProduct() {
         cancelNewProductButton.style.display = 'none';
         acceptProductButton.style.display = 'none';
         newProductButton.style.display = 'block';
+        localStorage.setItem("sourceOfTruthProduct", JSON.stringify(sourceOfTruthProduct));// Gurdar en localStorage
         renderProducts();
     });
 }
@@ -469,6 +498,9 @@ function deleteSelectedProduct() {
                     if (result) {
                         targetDiv.remove();
                         event.target.checked = false;
+                        sourceOfTruthProduct = sourceOfTruthProduct.filter(product => product.id !== targetId);
+                        localStorage.setItem("sourceOfTruthProduct", JSON.stringify(sourceOfTruthProduct));
+                        saveToLocalStorage("sourceOfTruthProduct", sourceOfTruthProduct);
                         console.log('Usuario acepto borrar producto');
                     } else {
                         event.target.checked = false;
@@ -490,37 +522,6 @@ function deleteSelectedProduct() {
 }
 
 deleteSelectedProduct();
-
-
-
-
-//Funcion para ver Category Page Selectivo
-function shoCategoryPage() {
-    document.addEventListener('click', function(event) {
-        let target = event.target;
-        let categoryClicked = target.closest("[id^='cat-']");
-        if (categoryClicked) {
-            let idClickeado = categoryClicked.id;
-            let idPagina = 'categoryPage-' + idClickeado;
-            let pagina = document.getElementById(idPagina);
-            let categoryPageContainer = document.getElementById('categoryPageContainer');
-            if (pagina) {
-                let productMainPage = document.getElementById('productMainPage');
-                let categoryMainPage = document.getElementById('categoriesMainPage');
-                let productPage = document.getElementById('productPageContainer');
-                pagina.style.display = 'block';
-                categoryPageContainer.style.display = 'block';
-                productMainPage.style.display = 'none';
-                categoryMainPage.style.display = 'none';
-                productPage.style.display = 'none';
-            }else {
-                console.log('Category Page Doesnt Exist');
-            }
-        }
-    })
-}
-shoCategoryPage(); 
-
 
 //Funcion para ver Category Page Selectivo
 function showCategoryPage() {
