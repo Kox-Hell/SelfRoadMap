@@ -37,6 +37,126 @@ const errorHeightIncrement = 10;
 
 let eventListenerAdded = false;//Para sideBarProductButton()
 
+document.addEventListener('DOMContentLoaded', function() {
+    createProductPage();
+    showProductPage();
+    createCategoryPage();
+});
+
+//Source of Truth
+let sourceOfTruthProduct = [
+    {   
+        name: "LapTop Gamer",
+        stock: 10,
+        price: '8000',
+        id: "sku-1",
+        status: true, // true = Active, false = Inactive
+        category: "Electronics",
+        image: "assets/laptopGamer.webp" // Ruta de la imagen
+    }
+];
+
+let currentID = parseInt(localStorage.getItem("currentID")) || sourceOfTruthProduct.length; // Recuperar ID o usar el length
+localStorage.setItem("currentID", currentID + 1); // Incrementar el ID en localStorage
+
+//Funcion para agregar productos nuevos al UI
+function renderProducts() {
+    let fatherContainer = document.getElementById("sourceOfTruthProductContainer");
+    fatherContainer.innerHTML = ""; // Limpiar antes de renderizar, osea que siempre estara vacio en el HTML, pero agregara dinamicamente
+    sourceOfTruthProduct.forEach(function(product) { //product es cada elemento en el array
+        let productMainAncestorDiv = document.createElement('div');
+        productMainAncestorDiv.classList.add('productMainAncestorDiv');
+        productMainAncestorDiv.id = `productMainAncestor-${product.id}`;
+        productMainAncestorDiv.innerHTML = 
+        `
+            <div class="checkBoxDiv">
+                <input type="checkbox" class="checkInput" aria-controls="${product.id}"/>
+            </div>
+            <div class="productContainer" id="${product.id}">
+                <div class="imageContainer">
+                    <img src="${product.image}" alt="${product.name}" onerror="this.onerror=null; this.src='assets/defaultImage.webp';"/>
+                </div>
+                <p class="name">${product.name}</p>
+                <div class="status">${product.status ? "Active" : "Inactive"}</div>
+                <p class="stock">${product.stock} in Stock</p>
+                <p class="category">${product.category}</p>
+                <p style="display: none;" class="price">${product.price}</p>
+            </div>
+        `;
+
+        fatherContainer.appendChild(productMainAncestorDiv);//Introduce productContainer al inicio del fatherContainer que es SourceOfTruthProductContainer
+    });
+    // Guardar el estado actualizado en localStorage
+    localStorage.setItem("sourceOfTruthProduct", JSON.stringify(sourceOfTruthProduct));
+}
+renderProducts();
+
+//Funcion para hacer push a nuevo producto con Accept Button
+function pushNewProduct() {
+    // Agregando listener para inputs en el menú de nuevo producto
+    newProductMenu.addEventListener("input", function(event) {
+        let target = event.target;
+        let categorySelection = document.getElementById('productCategory');
+        let uploadProductImage = document.getElementById('uploadImageInput');
+        categorySelection.addEventListener('change', function(event) {
+            inputValues["category"] = event.target.value; // se guarda la categoría seleccionada
+            console.log('Caegoria seleccionada:', event.target.value);
+        });
+        uploadProductImage.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader(); // Usamos FileReader para obtener la imagen que subió el usuario
+                reader.onload = function(e) {
+                    inputValues["image"] = e.target.result; // La imagen se guarda en formato base64
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        if (target.tagName === "INPUT") {
+            inputValues[target.name] = target.value;
+            console.log("Actualizando inputValues:", inputValues);
+        }
+    });
+    acceptProductButton.addEventListener("click", function() {
+        let productName = document.getElementById('productName').value; 
+        let productQuantity = document.getElementById('productQuantity').value; 
+        let productPrice = document.getElementById('productPrice').value; 
+        let productCode = document.getElementById('productCode').value; 
+        let productCategory = document.getElementById('productCategory').value; 
+        let fileInput = document.getElementById('uploadImageInput'); 
+        let hasImage = fileInput.files.length > 0; 
+        if (!productName 
+            || !productQuantity 
+            || !productPrice 
+            || !productCode 
+            || !productCategory 
+            || !hasImage) {
+            alert("All fields must be filled, including Choose a Category and Upload Product Image"); 
+            return; 
+        }
+        inputValues["name"] = productName;
+        inputValues["stock"] = productQuantity; 
+        inputValues["id"] = "sku-" + productCode; 
+        inputValues["price"] = productPrice;
+        inputValues["category"] = productCategory;
+        let newProduct = { ...inputValues };
+        sourceOfTruthProduct.push(newProduct);
+        console.log("Producto agregado:", newProduct);
+        inputValues = {};// Reiniciando el objeto inputValues
+        let inputs = newProductMenu.querySelectorAll("input");// Reiniciando los campos del formulario
+        inputs.forEach(function(input) {
+            input.value = "";
+        });
+        document.getElementById('productCategory').value = ""; // Reiniciando el select de categoría
+        newProductMenu.style.display = 'none';
+        cancelNewProductButton.style.display = 'none';
+        acceptProductButton.style.display = 'none';
+        newProductButton.style.display = 'block';
+        renderProducts();
+    });
+}
+pushNewProduct();
+
 //Funcion para ver ID y Class de lo que se haga click
 function whatsTheIdAndClass() {
     document.addEventListener('click', function(event) {
@@ -46,12 +166,6 @@ function whatsTheIdAndClass() {
     })
 } 
 whatsTheIdAndClass();
-
-document.addEventListener('DOMContentLoaded', function() {
-    createProductPage();
-    showProductPage();
-    createCategoryPage();
-});
 
 //Funcion para click en SideBar Buttons
 function sideBarProductButton() {
@@ -142,6 +256,8 @@ document.addEventListener('click', function(event) {
     // Extraer datos del elemento clickeado
     let nameElement = idElement.querySelector('.name');
     let stockElement = idElement.querySelector('.stock');
+    let priceElement = idElement.querySelector('.price').textContent;
+    let priceNumber = parseInt(priceElement);
     let imageElement = idElement.querySelector('.imageContainer img');
     let base64Src = imageElement.src; // data:image/png;base64,iVBOR_0B...
     let idJustNumber = parseInt(idElement.id.replace('sku-', ''), 10);
@@ -202,6 +318,7 @@ document.addEventListener('click', function(event) {
             <strong>Availability</strong>
             <p>Stock: <span class="stockInfo">${stock}</span></p>
             <p>Product SKU: <span class="productSku">${skuNumber}</span></p>
+            <p class="priceProduct">Price: $${priceNumber}</p>
         </div>
         </div>
     </div>
@@ -330,153 +447,52 @@ function showMenus() {
 }
 showMenus();
 
-//Source of Truth
-let sourceOfTruthProduct = [
-    {   
-        name: "LapTop Gamer",
-        stock: 10,
-        price: '8000',
-        id: "sku-1",
-        status: true, // true = Active, false = Inactive
-        category: "Electronics",
-        image: "assets/laptopGamer.webp" // Ruta de la imagen
-    }
-];
-
-let currentID = parseInt(localStorage.getItem("currentID")) || sourceOfTruthProduct.length; // Recuperar ID o usar el length
-localStorage.setItem("currentID", currentID + 1); // Incrementar el ID en localStorage
-
-//Funcion para agregar productos nuevos al UI
-function renderProducts() {
-    let fatherContainer = document.getElementById("sourceOfTruthProductContainer");
-    fatherContainer.innerHTML = ""; // Limpiar antes de renderizar, osea que siempre estara vacio en el HTML, pero agregara dinamicamente
-    sourceOfTruthProduct.forEach(function(product) { //product es cada elemento en el array
-        let productMainAncestorDiv = document.createElement('div');
-        productMainAncestorDiv.classList.add('productMainAncestorDiv');
-        productMainAncestorDiv.id = `productMainAncestor-${product.id}`;
-        productMainAncestorDiv.innerHTML = 
-        `
-            <div class="checkBoxDiv">
-                <input type="checkbox" class="checkInput" aria-controls="${product.id}"/>
-            </div>
-            <div class="productContainer" id="${product.id}">
-                <div class="imageContainer">
-                    <img src="${product.image}" alt="${product.name}" onerror="this.onerror=null; this.src='assets/defaultImage.webp';"/>
-                </div>
-                <p class="name">${product.name}</p>
-                <div class="status">${product.status ? "Active" : "Inactive"}</div>
-                <p class="stock">${product.stock} in Stock</p>
-                <p class="category">${product.category}</p>
-            </div>
-        `;
-
-        fatherContainer.appendChild(productMainAncestorDiv);//Introduce productContainer al inicio del fatherContainer que es SourceOfTruthProductContainer
-    });
-    // Guardar el estado actualizado en localStorage
-    localStorage.setItem("sourceOfTruthProduct", JSON.stringify(sourceOfTruthProduct));
-}
-renderProducts();
-
-//Funcion para hacer push a nuevo producto con Accept Button
-function pushNewProduct() {
-    // Agregando listener para inputs en el menú de nuevo producto
-    newProductMenu.addEventListener("input", function(event) {
-        let target = event.target;
-        let categorySelection = document.getElementById('productCategory');
-        let uploadProductImage = document.getElementById('uploadImageInput');
-        categorySelection.addEventListener('change', function(event) {
-            inputValues["category"] = event.target.value; // se guarda la categoría seleccionada
-            console.log('Caegoria seleccionada:', event.target.value);
-        });
-        uploadProductImage.addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader(); // Usamos FileReader para obtener la imagen que subió el usuario
-                reader.onload = function(e) {
-                    inputValues["image"] = e.target.result; // La imagen se guarda en formato base64
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-        if (target.tagName === "INPUT") {
-            inputValues[target.name] = target.value;
-            console.log("Actualizando inputValues:", inputValues);
-        }
-    });
-    acceptProductButton.addEventListener("click", function() {
-        let productName = document.getElementById('productName').value; 
-        let productQuantity = document.getElementById('productQuantity').value; 
-        let productPrice = document.getElementById('productPrice').value; 
-        let productCode = document.getElementById('productCode').value; 
-        let productCategory = document.getElementById('productCategory').value; 
-        let fileInput = document.getElementById('uploadImageInput'); 
-        let hasImage = fileInput.files.length > 0; 
-        if (!productName 
-            || !productQuantity 
-            || !productPrice 
-            || !productCode 
-            || !productCategory 
-            || !hasImage) {
-            alert("All fields must be filled, including Choose a Category and Upload Product Image"); 
-            return; 
-        }
-        inputValues["name"] = productName;
-        inputValues["stock"] = productQuantity; 
-        inputValues["id"] = "sku-" + productCode; 
-        inputValues["price"] = productPrice;
-        inputValues["category"] = productCategory;
-        let newProduct = { ...inputValues };
-        sourceOfTruthProduct.push(newProduct);
-        console.log("Producto agregado:", newProduct);
-        inputValues = {};// Reiniciando el objeto inputValues
-        let inputs = newProductMenu.querySelectorAll("input");// Reiniciando los campos del formulario
-        inputs.forEach(function(input) {
-            input.value = "";
-        });
-        document.getElementById('productCategory').value = ""; // Reiniciando el select de categoría
-        newProductMenu.style.display = 'none';
-        cancelNewProductButton.style.display = 'none';
-        acceptProductButton.style.display = 'none';
-        newProductButton.style.display = 'block';
-        renderProducts();
-    });
-}
-pushNewProduct();
-
 //Funcion para Check Input
 function deleteSelectedProduct() {
     document.addEventListener('change', function(event) {
-        if (event.target.matches('input[type="checkbox"][aria-controls]')) {
+        if (event.target.matches('input[type="checkbox"][aria-controls]') && event.target.checked) {
             let targetId = event.target.getAttribute('aria-controls');
             let targetDiv = document.getElementById(`productMainAncestor-${targetId}`);
             if (targetDiv) {
                 console.log('Si funciona');
-                cancelNewProductButton.style.display = 'block';
                 newProductButton.style.display = 'none';
+                cancelNewProductButton.style.display = 'block';
+                cancelNewProductButton.onclick = function() {
+                    cancelNewProductButton.style.display = 'none';
+                    newProductButton.style.display = 'block';
+                    deleteProductButtonMain.style.display = 'none';
+                    event.target.checked = false;
+                }
                 deleteProductButtonMain.style.display = 'block';
-                deleteProductButtonMain.addEventListener('click', function()  {
+                deleteProductButtonMain.onclick = function() {
                     let result = confirm('Are you sure you want to delete this? This action cannot be undone');
                     if (result) {
                         targetDiv.remove();
                         event.target.checked = false;
-                        cancelNewProductButton.style.display = 'none';
-                        newProductButton.style.display = 'block';
-                        deleteProductButtonMain.style.display = 'none';
                         console.log('Usuario acepto borrar producto');
-                    }else {
+                    } else {
                         event.target.checked = false;
-                        cancelNewProductButton.style.display = 'none';
-                        newProductButton.style.display = 'block';
-                        deleteProductButtonMain.style.display = 'none';
                         console.log('Usuario cancelo borrar producto');
                     }
-                })
+                    cancelNewProductButton.style.display = 'none';
+                    newProductButton.style.display = 'block';
+                    deleteProductButtonMain.style.display = 'none';
+                    deleteProductButtonMain.onclick = null; // Limpia el evento después de ejecutarse
+                };
             }
-        } 
-
-    })
+        } else {
+            cancelNewProductButton.style.display = 'none';
+            newProductButton.style.display = 'block';
+            deleteProductButtonMain.style.display = 'none';
+            console.log('Unchecked');
+        }
+    });
 }
+
 deleteSelectedProduct();
+
+
+
 
 //Funcion para ver Category Page Selectivo
 function shoCategoryPage() {
@@ -572,7 +588,7 @@ function createCategoryPage() {
         <div class="searchInputContainerProduct">
         <input
             type="search"
-            class="input"
+            class="inputSearch"
             placeholder="Search product..."
             oninput="buscarProducto()"
             autocomplete="off"
@@ -580,20 +596,20 @@ function createCategoryPage() {
         <img src="assets/icons8-search-50.png" alt="" />
         </div>
         <div class="productButtonsContainer">
-            <button style="z-index: 2;" type="button" class="button" >
+            <button style="z-index: 2;" type="button" class="buttonNewProduct" >
             + New Product
             </button>
-            <button style="z-index: 1;" type="button" class="button" >
+            <button style="z-index: 1;" type="button" class="buttonCancel" >
             Cancel
             </button>
-            <button style="z-index: 2;" type="button" class="button" >
+            <button style="z-index: 2;" type="button" class="buttonDelete" >
                 Delete
             </button>
         </div>
     </div>
     <div class="productToolBar">
         <div class="toolContainer">
-            <input type="checkbox" class="checkInput" />
+            <input style="opacity: 0;" type="checkbox" class="checkInput" />
         </div>
         <div class="toolContainer">
             <p class="tool">Image</p>
@@ -616,7 +632,7 @@ function createCategoryPage() {
             <button class="sort">^</button>
         </div>
         <div class="prueba">
-            <div class="addProducts">
+            <div class="addProductsCat">
                 <div class="nameMessageContainer">
                     <label for="productName">Product Name</label>
                     <input
@@ -710,8 +726,8 @@ function createCategoryPage() {
             </div>
         </div>
     </div>
-    <div id="VERIFICAR"><!--sOURCEoFtRUTH?-->
-        <!--Aca se rellena con pRODUCTOS DE LA CATEGORIA-->
+    <div id="VERIFICAR"><!--SourceOfTruth?-->
+        <!--Aca se rellena con PRODUCTOS DE LA CATEGORIA-->
     </div>
 `;
         fatherContainer.appendChild(categoryPage);
