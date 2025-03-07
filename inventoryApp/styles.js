@@ -175,7 +175,7 @@ function pushNewProduct() {
         inputs.forEach(function(input) {
             input.value = "";
         });
-        document.getElementById('productCategory').value = ""; // Reiniciando el select de categoría
+        document.getElementById('productCategory').value   = ""; // Reiniciando el select de categoría
         newProductMenu.style.display = 'none';
         cancelNewProductButton.style.display = 'none';
         acceptProductButton.style.display = 'none';
